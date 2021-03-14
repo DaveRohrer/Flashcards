@@ -1,25 +1,22 @@
-import logo from './logo.svg';
-import './App.css';
+import logo from "./logo.svg";
+import "./App.css";
+import Flashcard from "./Flashcard";
+import { useState } from "react";
+import images from "./images/index";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+  const [currentIndex, setCurrentindex] = useState();
+  //for now array of characters can go here
+  //also logic for switching between goes here
+  const prompts = [
+    { leftPrompt: "A", rightPrompt: "a", image: images.apple },
+    { leftPrompt: "B", rightPrompt: "b", image: images.ball },
+    { leftPrompt: "C", rightPrompt: "c", image: images.cat },
+    { leftPrompt: "D", rightPrompt: "d", image: images.dog },
+  ];
+
+  //presentation/container components will be useful
+  return <Flashcard prompts={prompts[0]} />;
 }
 
 export default App;
