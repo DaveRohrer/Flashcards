@@ -14,19 +14,33 @@ function Flashcard(props) {
   });
 
   const handleClick = () => {
-    props.onClick();
+    if (animationIsRunning) {
+      return;
+    } else {
+      setAnimationIsRunning(true);
+      setClickWasRequested(true);
+    }
   };
 
-  const [animationSwitch, setAnimationSwitch] = useState(true);
+  const [animationIsRunning, setAnimationIsRunning] = useState(false);
+  const [clickWasRequested, setClickWasRequested] = useState(false);
   const { x } = useSpring({
     from: { x: 0 },
-    x: animationSwitch ? 1 : 0,
-    config: { duration: 1000 },
+    x: 1,
+    config: { duration: 500 },
+    reset: animationIsRunning,
+    onRest: () => {
+      setAnimationIsRunning(false);
+      if (clickWasRequested) {
+        setClickWasRequested(false);
+        props.onClick();
+      }
+    },
   });
 
   return (
     <animated.div
-      onClick={() => setAnimationSwitch(!animationSwitch)}
+      onClick={handleClick}
       style={{
         opacity: 1,
         transform: x
@@ -37,7 +51,7 @@ function Flashcard(props) {
           .interpolate((x) => `scale(${x})`),
       }}
     >
-      <div className="Flashcard" ref={FlashcardRef} onClick={handleClick}>
+      <div className="Flashcard" ref={FlashcardRef}>
         <div className="FlashcardTextContainer" ref={TextContainerRef}>
           <div className="FlashcardText">{props.prompts.leftPrompt}</div>
           <div className="FlashcardText AlignRight">
