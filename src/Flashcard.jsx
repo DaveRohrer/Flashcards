@@ -7,49 +7,51 @@ function Flashcard(props) {
   const FlashcardRef = useRef(null);
   const TextContainerRef = useRef(null);
 
+  const handleClick = () => {
+    if (!animationIsRunning) {
+      setAnimProps({ xys: [0, 0, 0.9] });
+      setClickWasRequested(true);
+      setAnimationIsRunning(true);
+    }
+  };
+
+  const handleRest = () => {
+    setAnimProps({ xys: [0, 0, 1.0] });
+    setAnimationIsRunning(false);
+    setClickWasRequested(false);
+  };
+
+  const [clickWasRequested, setClickWasRequested] = useState(false);
+  const [animationIsRunning, setAnimationIsRunning] = useState(true);
+
+  const [animProps, setAnimProps] = useSpring(() => ({
+    from: { xys: [0, 0, 0.9] },
+    xys: [0, 0, 1],
+    config: { mass: 1, tension: 450, friction: 10 },
+    onRest: handleRest,
+  }));
+
   useEffect(() => {
     setVerticalSpaceForImg(
       FlashcardRef.current.offsetHeight - TextContainerRef.current.offsetHeight
     );
-  });
-
-  const handleClick = () => {
-    if (animationIsRunning) {
-      return;
-    } else {
-      setAnimationIsRunning(true);
-      setClickWasRequested(true);
+    if (!animationIsRunning && clickWasRequested) {
+      props.onClick();
     }
-  };
+  }, [clickWasRequested, animationIsRunning]);
 
-  const [animationIsRunning, setAnimationIsRunning] = useState(false);
-  const [clickWasRequested, setClickWasRequested] = useState(false);
-  const { x } = useSpring({
-    from: { x: 0 },
-    x: 1,
-    config: { duration: 500 },
-    reset: animationIsRunning,
-    onRest: () => {
-      setAnimationIsRunning(false);
-      if (clickWasRequested) {
-        setClickWasRequested(false);
-        props.onClick();
-      }
-    },
-  });
+  // not using the rotation currently. Leaving it here for now in case I change my mind.
+  // may be important if we ever wanted to have multiple transition animations come in
+  // randomly for the deck
+
+  const transform = (x, y, s) =>
+    `rotateX(${x}deg) rotateY(${y}deg) scale(${s})`;
 
   return (
     <animated.div
+      className="InvisibleFlashcard"
       onClick={handleClick}
-      style={{
-        opacity: 1,
-        transform: x
-          .interpolate({
-            range: [0, 0.15, 0.85, 1],
-            output: [1, 0.95, 0.95, 1],
-          })
-          .interpolate((x) => `scale(${x})`),
-      }}
+      style={{ transform: animProps.xys.interpolate(transform) }}
     >
       <div className="Flashcard" ref={FlashcardRef}>
         <div className="FlashcardTextContainer" ref={TextContainerRef}>
