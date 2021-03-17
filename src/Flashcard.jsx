@@ -7,14 +7,13 @@ function Flashcard(props) {
   const TextContainerRef = useRef(null);
 
   useEffect(() => {
-    // Update the document title using the browser API
     setVerticalSpaceForImg(
       FlashcardRef.current.offsetHeight - TextContainerRef.current.offsetHeight
     );
   });
 
   return (
-    <div className="Flashcard" ref={FlashcardRef}>
+    <div className="Flashcard" ref={FlashcardRef} onClick={props.onClick}>
       <div className="FlashcardTextContainer" ref={TextContainerRef}>
         <div className="FlashcardText">{props.prompts.leftPrompt}</div>
         <div className="FlashcardText AlignRight">
