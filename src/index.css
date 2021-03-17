@@ -54,3 +54,10 @@ code {
   margin: 0 auto;
   justify-content: center;
 }
+
+.InvisibleFlashcard {
+  width: 500px;
+  height: 700px;
+  margin: 0 auto;
+  justify-content: center;
+}
