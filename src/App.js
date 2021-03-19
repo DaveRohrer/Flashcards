@@ -1,7 +1,6 @@
 import "./App.css";
 import Flashcard from "./Flashcard";
-import { useState } from "react";
-import { useSpring, animated } from "react-spring";
+import { useEffect, useState } from "react";
 import images from "./images";
 
 function App() {
@@ -9,18 +8,56 @@ function App() {
 
   const handleClick = () => {
     setCurrentIndex(
-      (prevCurrentIndex) => (prevCurrentIndex + 1) % Object.keys(images).length
+      (prevCurrentIndex) => (prevCurrentIndex + 1) % prompts.length
     );
   };
 
-  const prompts = [
-    { leftPrompt: "A", rightPrompt: "a", image: images.apple },
-    { leftPrompt: "B", rightPrompt: "b", image: images.ball },
-    { leftPrompt: "C", rightPrompt: "c", image: images.cat },
-    { leftPrompt: "D", rightPrompt: "d", image: images.dog },
-  ];
+  const [prompts, setPrompts] = useState([]);
+  const getFlashcardJSON = () => {
+    return new Promise((resolve) => {
+      fetch("/cards")
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setPrompts(
+            data.map((element) => {
+              return {
+                leftPrompt: element.left_prompt,
+                rightPrompt: element.right_prompt,
+                image: element.image_path,
+              };
+            })
+          );
+        })
+        .catch((error) => {
+          console.error(
+            "There has been a problem with your fetch operation:",
+            error
+          );
+        });
+    });
+  };
 
-  return <Flashcard prompts={prompts[currentIndex]} onClick={handleClick} />;
+  useEffect(() => {
+    getFlashcardJSON();
+  }, []);
+
+  const defaultPrompt = {
+    leftPrompt: "A",
+    rightPrompt: "a",
+    image: images.apple,
+  };
+  console.log(prompts);
+  return (
+    <Flashcard
+      prompts={prompts[0] ? prompts[currentIndex] : defaultPrompt}
+      onClick={handleClick}
+    />
+  );
 }
 
 export default App;
