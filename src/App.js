@@ -1,7 +1,6 @@
 import "./App.css";
 import Flashcard from "./Flashcard";
 import { useEffect, useState } from "react";
-import images from "./images";
 
 function App() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,6 +12,7 @@ function App() {
   };
 
   const [prompts, setPrompts] = useState([]);
+
   const getFlashcardJSON = () => {
     return new Promise((resolve) => {
       fetch("/cards")
