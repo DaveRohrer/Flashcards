@@ -38,7 +38,7 @@ function Flashcard(props) {
     if (!animationIsRunning && clickWasRequested) {
       props.onClick();
     }
-  }, [clickWasRequested, animationIsRunning]);
+  }, [clickWasRequested, animationIsRunning, props]);
 
   // not using the rotation currently. Leaving it here for now in case I change my mind.
   // may be important if we ever wanted to have multiple transition animations come in
